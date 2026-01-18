@@ -1,146 +1,141 @@
-// Хранение пользователей в localStorage
-const USERS_KEY = 'registration_users';
-
-// Получить всех пользователей
-function getUsers() {
-    const users = localStorage.getItem(USERS_KEY);
-    return users ? JSON.parse(users) : [];
-}
-
-// Сохранить пользователя
-function saveUser(login, password) {
-    const users = getUsers();
-    users.push({ login, password });
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
-
-// Проверить, существует ли пользователь
-function userExists(login, password = null) {
-    const users = getUsers();
+// Простой и рабочий вариант
+document.addEventListener('DOMContentLoaded', function() {
+    const USERS_KEY = 'registration_users';
     
-    if (password) {
-        // Для ВХОДА: проверяем и логин И пароль
-        return users.some(user => user.login === login && user.password === password);
-    } else {
-        // Для РЕГИСТРАЦИИ: проверяем только логин
+    // Получить всех пользователей
+    function getUsers() {
+        const data = localStorage.getItem(USERS_KEY);
+        return data ? JSON.parse(data) : [];
+    }
+    
+    // Сохранить пользователя
+    function saveUser(login, password) {
+        const users = getUsers();
+        users.push({ login, password });
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+    
+    // Проверить логин (для регистрации)
+    function isLoginTaken(login) {
+        const users = getUsers();
         return users.some(user => user.login === login);
     }
-}
-
-// Проверить логин на валидность
-function validateLogin(login) {
-    if (!login.trim()) return 'Логин обязателен';
-    const validChars = /^[A-Za-z0-9_-]+$/;
-    if (!validChars.test(login)) return 'Только латинские буквы, цифры, _ и -';
-    // Проверяем только логин (без пароля)
-    if (userExists(login)) return 'Этот логин уже занят';
-    return '';
-}
-
-// Проверить пароль
-function validatePassword(password) {
-    if (!password) return 'Пароль обязателен';
-    if (password.length < 6) return 'Пароль должен быть не менее 6 символов';
-    return '';
-}
-
-// Показать сообщение
-function showMessage(text, isError = false) {
-    const messageEl = document.getElementById('message');
-    messageEl.textContent = text;
-    messageEl.className = isError ? 'message error-message' : 'message success';
-    setTimeout(() => messageEl.textContent = '', 3000);
-}
-
-// Очистить ошибки
-function clearErrors() {
-    document.querySelectorAll('.error').forEach(el => el.textContent = '');
-}
-
-// Показать форму регистрации
-function showRegistrationForm() {
-    document.getElementById('registrationForm').classList.remove('hidden');
-    document.getElementById('loginForm').classList.add('hidden');
-    clearErrors();
-    document.getElementById('message').textContent = '';
-}
-
-// Показать форму входа
-function showLoginForm() {
-    document.getElementById('loginForm').classList.remove('hidden');
-    document.getElementById('registrationForm').classList.add('hidden');
-    clearErrors();
-    document.getElementById('message').textContent = '';
-}
-
-// === ОБРАБОТКА ФОРМЫ РЕГИСТРАЦИИ ===
-document.getElementById('registrationForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    clearErrors();
     
-    const login = document.getElementById('login').value;
-    const password = document.getElementById('password').value;
-    const saveData = document.getElementById('saveData').checked;
-    
-    const loginError = validateLogin(login);
-    const passwordError = validatePassword(password);
-    
-    if (loginError) document.getElementById('loginError').textContent = loginError;
-    if (passwordError) document.getElementById('passwordError').textContent = passwordError;
-    
-    if (!loginError && !passwordError) {
-        // Проверяем только по логину (без пароля)
-        if (userExists(login)) {
-            // Если логин уже занят - показываем форму входа
-            showMessage('Пользователь с таким логином уже существует. Войдите в систему.', true);
-            showLoginForm();
-            document.getElementById('loginInput').value = login;
-            // Пароль НЕ заполняем - для безопасности
-        } else {
-            // Регистрируем нового пользователя
-            saveUser(login, password);
-            
-            if (saveData) {
-                localStorage.setItem('last_login', login);
-            }
-            
-            showMessage(`Пользователь "${login}" успешно зарегистрирован!`);
-            document.getElementById('registrationForm').reset();
-        }
+    // Проверить логин и пароль (для входа)
+    function checkLoginPassword(login, password) {
+        const users = getUsers();
+        return users.some(user => user.login === login && user.password === password);
     }
-});
-
-// === ОБРАБОТКА ФОРМЫ ВХОДА ===
-document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    clearErrors();
     
-    const login = document.getElementById('loginInput').value;
-    const password = document.getElementById('passwordInput').value;
-    
-    // Проверяем и логин И пароль
-    if (userExists(login, password)) {
-        showMessage(`Добро пожаловать, ${login}! Вход выполнен успешно.`);
-        document.getElementById('loginForm').reset();
-        setTimeout(() => showRegistrationForm(), 2000);
-    } else {
-        document.getElementById('loginError2').textContent = 'Неверный логин или пароль';
-        showMessage('Ошибка входа. Проверьте данные.', true);
+    // Валидация логина
+    function validateLogin(login) {
+        if (!login.trim()) return 'Логин обязателен';
+        if (!/^[A-Za-z0-9_-]+$/.test(login)) return 'Только латинские буквы, цифры, _ и -';
+        if (isLoginTaken(login)) return 'Этот логин уже занят';
+        return '';
     }
-});
-
-// === ПЕРЕКЛЮЧЕНИЕ МЕЖДУ ФОРМАМИ ===
-document.getElementById('switchToLogin').addEventListener('click', showLoginForm);
-document.getElementById('switchToReg').addEventListener('click', showRegistrationForm);
-
-// === ЗАГРУЗКА СОХРАНЕННОГО ЛОГИНА ===
-window.addEventListener('load', function() {
+    
+    // Валидация пароля
+    function validatePassword(password) {
+        if (!password) return 'Пароль обязателен';
+        if (password.length < 6) return 'Пароль должен быть не менее 6 символов';
+        return '';
+    }
+    
+    // Показать/скрыть формы
+    function showForm(formId) {
+        document.getElementById('registrationForm').classList.toggle('hidden', formId !== 'register');
+        document.getElementById('loginForm').classList.toggle('hidden', formId !== 'login');
+    }
+    
+    // Показать сообщение
+    function showMessage(text, isError = false) {
+        const msg = document.getElementById('message');
+        msg.textContent = text;
+        msg.className = isError ? 'message error-message' : 'message success';
+        setTimeout(() => msg.textContent = '', 3000);
+    }
+    
+    // Очистить ошибки
+    function clearErrors() {
+        document.querySelectorAll('.error').forEach(el => el.textContent = '');
+    }
+    
+    // === ИНИЦИАЛИЗАЦИЯ ===
+    showForm('register');
+    
+    // Загрузить сохраненный логин
     const savedLogin = localStorage.getItem('last_login');
     if (savedLogin) {
         document.getElementById('login').value = savedLogin;
         document.getElementById('saveData').checked = true;
     }
     
-    // Всегда показываем форму регистрации при загрузке
-    showRegistrationForm();
+    // === РЕГИСТРАЦИЯ ===
+    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        clearErrors();
+        
+        const login = document.getElementById('login').value;
+        const password = document.getElementById('password').value;
+        const saveData = document.getElementById('saveData').checked;
+        
+        let hasError = false;
+        
+        // Проверка логина
+        const loginError = validateLogin(login);
+        if (loginError) {
+            document.getElementById('loginError').textContent = loginError;
+            hasError = true;
+        }
+        
+        // Проверка пароля
+        const passError = validatePassword(password);
+        if (passError) {
+            document.getElementById('passwordError').textContent = passError;
+            hasError = true;
+        }
+        
+        if (!hasError) {
+            saveUser(login, password);
+            
+            if (saveData) {
+                localStorage.setItem('last_login', login);
+            }
+            
+            showMessage(`Успешно зарегистрирован: ${login}`);
+            document.getElementById('registrationForm').reset();
+        }
+    });
+    
+    // === ВХОД ===
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        clearErrors();
+        
+        const login = document.getElementById('loginInput').value;
+        const password = document.getElementById('passwordInput').value;
+        
+        if (checkLoginPassword(login, password)) {
+            showMessage(`Вход выполнен: ${login}`);
+            document.getElementById('loginForm').reset();
+            setTimeout(() => showForm('register'), 2000);
+        } else {
+            document.getElementById('loginError2').textContent = 'Неверный логин или пароль';
+            showMessage('Ошибка входа', true);
+        }
+    });
+    
+    // === ПЕРЕКЛЮЧЕНИЕ ФОРМ ===
+    document.getElementById('switchToLogin').addEventListener('click', function() {
+        showForm('login');
+        clearErrors();
+    });
+    
+    document.getElementById('switchToReg').addEventListener('click', function() {
+        showForm('register');
+        clearErrors();
+    });
+    
+    console.log('Система готова!');
 });

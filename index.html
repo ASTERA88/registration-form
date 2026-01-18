@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма регистрации</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- ФОРМА РЕГИСТРАЦИИ -->
+        <form id="registrationForm" class="form">
+            <h2>Регистрация</h2>
+            
+            <!-- Поле Логин -->
+            <div class="form-group">
+                <label for="login">Логин:</label>
+                <input type="text" id="login" placeholder="Введите логин" required>
+                <div class="hint">Можно использовать: латинские буквы, цифры, _ , -</div>
+                <div class="error" id="loginError"></div>
+            </div>
+            
+            <!-- Поле Пароль -->
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" placeholder="Введите пароль" required>
+                <div class="hint">Не менее 6 символов</div>
+                <div class="error" id="passwordError"></div>
+            </div>
+            
+            <!-- Чекбокс -->
+            <div class="form-group">
+                <label class="checkbox">
+                    <input type="checkbox" id="saveData">
+                    <span>Сохранить данные</span>
+                </label>
+            </div>
+            
+            <!-- Кнопка -->
+            <button type="submit">Зарегистрироваться</button>
+            
+            <!-- Ссылка на вход -->
+            <div class="link" id="switchToLogin">Уже есть аккаунт? Войти</div>
+        </form>
+        
+        <!-- ФОРМА ВХОДА (скрыта) -->
+        <form id="loginForm" class="form hidden">
+            <h2>Вход</h2>
+            
+            <!-- Поле Логин -->
+            <div class="form-group">
+                <label for="loginInput">Логин:</label>
+                <input type="text" id="loginInput" placeholder="Введите логин" required>
+                <div class="error" id="loginError2"></div>
+            </div>
+            
+            <!-- Поле Пароль -->
+            <div class="form-group">
+                <label for="passwordInput">Пароль:</label>
+                <input type="password" id="passwordInput" placeholder="Введите пароль" required>
+                <div class="error" id="passwordError2"></div>
+            </div>
+            
+            <!-- Кнопка -->
+            <button type="submit">Войти</button>
+            
+            <!-- Ссылка на регистрацию -->
+            <div class="link" id="switchToReg">Нет аккаунта? Зарегистрироваться</div>
+        </form>
+        
+        <!-- Блок для сообщений -->
+        <div id="message" class="message"></div>
+    </div>
+    
+    <!-- Подключение JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

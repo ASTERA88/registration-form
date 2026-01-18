@@ -1,4 +1,3 @@
-// Простой и рабочий вариант
 document.addEventListener('DOMContentLoaded', function() {
     const USERS_KEY = 'registration_users';
     
@@ -15,23 +14,23 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem(USERS_KEY, JSON.stringify(users));
     }
     
-    // Проверить логин (для регистрации)
+    // Проверить, занят ли логин (для регистрации)
     function isLoginTaken(login) {
         const users = getUsers();
         return users.some(user => user.login === login);
     }
     
-    // Проверить логин и пароль (для входа)
-    function checkLoginPassword(login, password) {
+    // Проверить полное совпадение логина и пароля
+    function isUserExists(login, password) {
         const users = getUsers();
         return users.some(user => user.login === login && user.password === password);
     }
     
     // Валидация логина
-    function validateLogin(login) {
+    function validateLogin(login, checkForExisting = true) {
         if (!login.trim()) return 'Логин обязателен';
         if (!/^[A-Za-z0-9_-]+$/.test(login)) return 'Только латинские буквы, цифры, _ и -';
-        if (isLoginTaken(login)) return 'Этот логин уже занят';
+        if (checkForExisting && isLoginTaken(login)) return 'Этот логин уже занят';
         return '';
     }
     
@@ -82,8 +81,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let hasError = false;
         
-        // Проверка логина
-        const loginError = validateLogin(login);
+        // Проверка логина (без проверки на занятость)
+        const loginError = validateLogin(login, false); // false - не проверяем занятость
         if (loginError) {
             document.getElementById('loginError').textContent = loginError;
             hasError = true;
@@ -97,14 +96,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (!hasError) {
-            saveUser(login, password);
-            
-            if (saveData) {
-                localStorage.setItem('last_login', login);
+            // Проверяем, существует ли уже пользователь с таким логином И паролем
+            if (isUserExists(login, password)) {
+                // Если пользователь уже существует - показываем форму входа
+                showMessage('Вы уже зарегистрированы. Войдите в систему.', true);
+                showForm('login');
+                document.getElementById('loginInput').value = login;
+                document.getElementById('passwordInput').value = password;
+            } else if (isLoginTaken(login)) {
+                // Если логин занят другим паролем
+                document.getElementById('loginError').textContent = 'Этот логин уже занят';
+                showMessage('Логин уже занят другим пользователем.', true);
+            } else {
+                // Регистрируем нового пользователя
+                saveUser(login, password);
+                
+                if (saveData) {
+                    localStorage.setItem('last_login', login);
+                }
+                
+                showMessage(`Успешно зарегистрирован: ${login}`);
+                document.getElementById('registrationForm').reset();
             }
-            
-            showMessage(`Успешно зарегистрирован: ${login}`);
-            document.getElementById('registrationForm').reset();
         }
     });
     
@@ -116,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const login = document.getElementById('loginInput').value;
         const password = document.getElementById('passwordInput').value;
         
-        if (checkLoginPassword(login, password)) {
+        if (isUserExists(login, password)) {
             showMessage(`Вход выполнен: ${login}`);
             document.getElementById('loginForm').reset();
             setTimeout(() => showForm('register'), 2000);

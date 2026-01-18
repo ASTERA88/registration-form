@@ -6,24 +6,24 @@
 }
 
 body {
-    font-family: Arial, sans-serif; /* Шрифт Ариал */
-    color: #0a2463; /* Темно-синий цвет текста */
-    background-color: #f0f8ff; /* Светлый фон страницы */
+    font-family: Arial, sans-serif;
+    color: #0a2463;
+    background-color: #f0f8ff;
     min-height: 100vh;
     display: flex;
-    justify-content: center; /* Центрирование по горизонтали */
-    align-items: center; /* Центрирование по вертикали */
+    justify-content: center;
+    align-items: center;
     padding: 20px;
 }
 
 .container {
     width: 100%;
-    max-width: 450px; /* Фиксированная ширина формы */
+    max-width: 450px;
 }
 
 /* ОБЩИЕ СТИЛИ ДЛЯ ФОРМ */
 .form {
-    background-color: #e0f7e9; /* Бледно-зеленый цвет формы */
+    background-color: #e0f7e9;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 5px 20px rgba(10, 36, 99, 0.15);
@@ -58,29 +58,27 @@ label {
     color: #0a2463;
 }
 
-/* ПОЛЯ ВВОДА (Логин и Пароль) - БЛЕДНО-ЖЕЛТЫЕ */
+/* ПОЛЯ ВВОДА - БЛЕДНО-ЖЕЛТЫЕ */
 input[type="text"],
 input[type="password"] {
     width: 100%;
     padding: 14px;
-    background-color: #fffacd; /* Бледно-желтый цвет полей */
-    border: 2px solid #ffeb3b; /* Желтая граница */
+    background-color: #fffacd;
+    border: 2px solid #ffeb3b;
     border-radius: 8px;
     font-size: 16px;
     color: #0a2463;
-    transition: all 0.3s;
 }
 
-/* ФОКУС НА ПОЛЕ ВВОДА */
+/* ФОКУС НА ПОЛЕ */
 input[type="text"]:focus,
 input[type="password"]:focus {
     outline: none;
     border-color: #ff9800;
     background-color: #fff9c4;
-    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
 }
 
-/* ПОДСКАЗКИ ПОД ПОЛЯМИ */
+/* ПОДСКАЗКИ */
 .hint {
     font-size: 13px;
     color: #5d7eb6;
@@ -88,7 +86,7 @@ input[type="password"]:focus {
     font-style: italic;
 }
 
-/* СООБЩЕНИЯ ОБ ОШИБКАХ */
+/* ОШИБКИ */
 .error {
     color: #d32f2f;
     font-size: 14px;
@@ -97,7 +95,7 @@ input[type="password"]:focus {
     font-weight: bold;
 }
 
-/* ЧЕКБОКС "Сохранить данные" */
+/* ЧЕКБОКС */
 .checkbox {
     display: flex;
     align-items: center;
@@ -121,34 +119,23 @@ input[type="password"]:focus {
 button {
     width: 100%;
     padding: 16px;
-    background-color: #ffccd6; /* Бледно-розовый цвет кнопки */
+    background-color: #ffccd6;
     color: #0a2463;
     border: none;
     border-radius: 8px;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s;
     margin-top: 15px;
     border: 2px solid #ff99aa;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 /* ЭФФЕКТ ПРИ НАВЕДЕНИИ */
 button:hover {
     background-color: #ffb6c1;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 99, 132, 0.3);
 }
 
-/* ЭФФЕКТ ПРИ НАЖАТИИ */
-button:active {
-    transform: translateY(0);
-    background-color: #ff99aa;
-}
-
-/* ССЫЛКИ ДЛЯ ПЕРЕКЛЮЧЕНИЯ ФОРМ */
+/* ССЫЛКИ */
 .link {
     text-align: center;
     margin-top: 22px;
@@ -157,7 +144,6 @@ button:active {
     font-size: 16px;
     font-weight: bold;
     text-decoration: underline;
-    transition: color 0.3s;
 }
 
 .link:hover {
@@ -190,7 +176,7 @@ button:active {
     border-color: #f5c6cb;
 }
 
-/* АДАПТИВНОСТЬ ДЛЯ ТЕЛЕФОНОВ */
+/* АДАПТИВНОСТЬ */
 @media (max-width: 500px) {
     .container {
         padding: 10px;

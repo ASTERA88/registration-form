@@ -1,23 +1,20 @@
-// ==================== КОНСТАНТЫ И ХРАНЕНИЕ ====================
+// Хранение пользователей в localStorage
 const USERS_KEY = 'registration_users';
-const AUTH_TOKEN_KEY = 'authToken';
-const CURRENT_USER_KEY = 'currentUser';
-const REMEMBER_ME_KEY = 'rememberMe';
-const SAVED_LOGIN_KEY = 'savedLogin';
-const LAST_LOGIN_KEY = 'last_login';
 
-// ==================== РАБОТА С ПОЛЬЗОВАТЕЛЯМИ ====================
+// Получить всех пользователей
 function getUsers() {
     const users = localStorage.getItem(USERS_KEY);
     return users ? JSON.parse(users) : [];
 }
 
+// Сохранить пользователя
 function saveUser(login, password) {
     const users = getUsers();
     users.push({ login, password });
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
 
+// Проверить, существует ли пользователь
 function userExists(login, password = null) {
     const users = getUsers();
     if (password) {
@@ -27,21 +24,23 @@ function userExists(login, password = null) {
     }
 }
 
-// ==================== ВАЛИДАЦИЯ ====================
+// Проверить логин на валидность
 function validateLogin(login) {
     if (!login.trim()) return 'Логин обязателен';
     const validChars = /^[A-Za-z0-9_-]+$/;
     if (!validChars.test(login)) return 'Только латинские буквы, цифры, _ и -';
+    if (userExists(login)) return 'Этот логин уже занят';
     return '';
 }
 
+// Проверить пароль
 function validatePassword(password) {
     if (!password) return 'Пароль обязателен';
     if (password.length < 6) return 'Пароль должен быть не менее 6 символов';
     return '';
 }
 
-// ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+// Показать сообщение
 function showMessage(text, isError = false) {
     const messageEl = document.getElementById('message');
     messageEl.textContent = text;
@@ -49,10 +48,12 @@ function showMessage(text, isError = false) {
     setTimeout(() => messageEl.textContent = '', 3000);
 }
 
+// Очистить ошибки
 function clearErrors() {
     document.querySelectorAll('.error').forEach(el => el.textContent = '');
 }
 
+// Показать форму регистрации
 function showRegistrationForm() {
     document.getElementById('registrationForm').classList.remove('hidden');
     document.getElementById('loginForm').classList.add('hidden');
@@ -60,6 +61,7 @@ function showRegistrationForm() {
     document.getElementById('message').textContent = '';
 }
 
+// Показать форму входа
 function showLoginForm() {
     document.getElementById('loginForm').classList.remove('hidden');
     document.getElementById('registrationForm').classList.add('hidden');
@@ -67,25 +69,7 @@ function showLoginForm() {
     document.getElementById('message').textContent = '';
 }
 
-// ==================== АВТОАВТОРИЗАЦИЯ ====================
-function checkAutoLogin() {
-    // Если был выбран "Запомнить меня" - заполняем форму входа
-    if (localStorage.getItem(REMEMBER_ME_KEY) === 'true') {
-        const savedLogin = localStorage.getItem(SAVED_LOGIN_KEY);
-        if (savedLogin) {
-            const loginInput = document.getElementById('loginInput');
-            const rememberMeCheckbox = document.getElementById('rememberMe');
-            if (loginInput && rememberMeCheckbox) {
-                loginInput.value = savedLogin;
-                rememberMeCheckbox.checked = true;
-            }
-        }
-    }
-    
-    return false;
-}
-
-// ==================== ОБРАБОТКА ФОРМЫ РЕГИСТРАЦИИ ====================
+// === ОБРАБОТКА ФОРМЫ РЕГИСТРАЦИИ ===
 document.getElementById('registrationForm').addEventListener('submit', function(event) {
     event.preventDefault();
     clearErrors();
@@ -102,15 +86,17 @@ document.getElementById('registrationForm').addEventListener('submit', function(
     
     if (!loginError && !passwordError) {
         if (userExists(login, password)) {
+            // Если пользователь уже есть - показываем форму входа
             showMessage('Пользователь уже существует. Войдите в систему.', true);
             showLoginForm();
             document.getElementById('loginInput').value = login;
             document.getElementById('passwordInput').value = password;
         } else {
+            // Регистрируем нового пользователя
             saveUser(login, password);
             
             if (saveData) {
-                localStorage.setItem(LAST_LOGIN_KEY, login);
+                localStorage.setItem('last_login', login);
             }
             
             showMessage(`Пользователь "${login}" успешно зарегистрирован!`);
@@ -119,66 +105,37 @@ document.getElementById('registrationForm').addEventListener('submit', function(
     }
 });
 
-// ==================== ОБРАБОТКА ФОРМЫ ВХОДА ====================
+// === ОБРАБОТКА ФОРМЫ ВХОДА ===
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
     clearErrors();
     
     const login = document.getElementById('loginInput').value;
     const password = document.getElementById('passwordInput').value;
-    const rememberMe = document.getElementById('rememberMe').checked;
     
     if (userExists(login, password)) {
-        // Сохраняем данные авторизации
-        localStorage.setItem(AUTH_TOKEN_KEY, 'auth_' + Date.now());
-        localStorage.setItem(CURRENT_USER_KEY, login);
-        
-        // Сохраняем настройку "Запомнить меня"
-        if (rememberMe) {
-            localStorage.setItem(REMEMBER_ME_KEY, 'true');
-            localStorage.setItem(SAVED_LOGIN_KEY, login);
-        } else {
-            localStorage.removeItem(REMEMBER_ME_KEY);
-            localStorage.removeItem(SAVED_LOGIN_KEY);
-        }
-        
-        // ПЕРЕНАПРАВЛЕНИЕ НА СТРАНИЦУ СООБЩЕНИЙ
-        showMessage('Вход выполнен! Перенаправление...');
-        setTimeout(() => {
-            window.location.href = 'messages.html';
-        }, 1000);
-        
+        showMessage(`Добро пожаловать, ${login}! Вход выполнен успешно.`);
+        document.getElementById('loginForm').reset();
+        // Через 2 секунды возвращаем к регистрации
+        setTimeout(() => showRegistrationForm(), 2000);
     } else {
         document.getElementById('loginError2').textContent = 'Неверный логин или пароль';
         showMessage('Ошибка входа. Проверьте данные.', true);
     }
 });
 
-// ==================== ПЕРЕКЛЮЧЕНИЕ ФОРМ ====================
+// === ПЕРЕКЛЮЧЕНИЕ МЕЖДУ ФОРМАМИ ===
 document.getElementById('switchToLogin').addEventListener('click', showLoginForm);
 document.getElementById('switchToReg').addEventListener('click', showRegistrationForm);
 
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+// === ЗАГРУЗКА СОХРАНЕННОГО ЛОГИНА ===
 window.addEventListener('load', function() {
-    // Загружаем сохраненный логин для регистрации
-    const savedLogin = localStorage.getItem(LAST_LOGIN_KEY);
+    const savedLogin = localStorage.getItem('last_login');
     if (savedLogin) {
         document.getElementById('login').value = savedLogin;
         document.getElementById('saveData').checked = true;
     }
     
-    // Проверяем автоавторизацию (только заполняет поля)
-    checkAutoLogin();
-    
-    // ВСЕГДА показываем форму регистрации при загрузке
+    // Всегда показываем форму регистрации при загрузке
     showRegistrationForm();
 });
-
-// ==================== ФУНКЦИЯ ВЫХОДА ====================
-window.logoutUser = function() {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
-    localStorage.removeItem(CURRENT_USER_KEY);
-    localStorage.removeItem(REMEMBER_ME_KEY);
-    localStorage.removeItem(SAVED_LOGIN_KEY);
-    window.location.href = 'index.html';
-};

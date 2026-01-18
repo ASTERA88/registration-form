@@ -17,9 +17,12 @@ function saveUser(login, password) {
 // Проверить, существует ли пользователь
 function userExists(login, password = null) {
     const users = getUsers();
+    
     if (password) {
+        // Для ВХОДА: проверяем и логин И пароль
         return users.some(user => user.login === login && user.password === password);
     } else {
+        // Для РЕГИСТРАЦИИ: проверяем только логин
         return users.some(user => user.login === login);
     }
 }
@@ -29,6 +32,7 @@ function validateLogin(login) {
     if (!login.trim()) return 'Логин обязателен';
     const validChars = /^[A-Za-z0-9_-]+$/;
     if (!validChars.test(login)) return 'Только латинские буквы, цифры, _ и -';
+    // Проверяем только логин (без пароля)
     if (userExists(login)) return 'Этот логин уже занят';
     return '';
 }
@@ -85,12 +89,13 @@ document.getElementById('registrationForm').addEventListener('submit', function(
     if (passwordError) document.getElementById('passwordError').textContent = passwordError;
     
     if (!loginError && !passwordError) {
-        if (userExists(login, password)) {
-            // Если пользователь уже есть - показываем форму входа
-            showMessage('Пользователь уже существует. Войдите в систему.', true);
+        // Проверяем только по логину (без пароля)
+        if (userExists(login)) {
+            // Если логин уже занят - показываем форму входа
+            showMessage('Пользователь с таким логином уже существует. Войдите в систему.', true);
             showLoginForm();
             document.getElementById('loginInput').value = login;
-            document.getElementById('passwordInput').value = password;
+            // Пароль НЕ заполняем - для безопасности
         } else {
             // Регистрируем нового пользователя
             saveUser(login, password);
@@ -113,10 +118,10 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     const login = document.getElementById('loginInput').value;
     const password = document.getElementById('passwordInput').value;
     
+    // Проверяем и логин И пароль
     if (userExists(login, password)) {
         showMessage(`Добро пожаловать, ${login}! Вход выполнен успешно.`);
         document.getElementById('loginForm').reset();
-        // Через 2 секунды возвращаем к регистрации
         setTimeout(() => showRegistrationForm(), 2000);
     } else {
         document.getElementById('loginError2').textContent = 'Неверный логин или пароль';

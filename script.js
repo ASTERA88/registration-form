@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('saveData').checked = true;
     }
     
-    // === РЕГИСТРАЦИЯ ===
+        // === РЕГИСТРАЦИЯ ===
     document.getElementById('registrationForm').addEventListener('submit', function(e) {
         e.preventDefault();
         clearErrors();
@@ -96,19 +96,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (!hasError) {
-            // Проверяем, существует ли уже пользователь с таким логином И паролем
-            if (isUserExists(login, password)) {
-                // Если пользователь уже существует - показываем форму входа
-                showMessage('Вы уже зарегистрированы. Войдите в систему.', true);
-                showForm('login');
-                document.getElementById('loginInput').value = login;
-                document.getElementById('passwordInput').value = password;
-            } else if (isLoginTaken(login)) {
-                // Если логин занят другим паролем
-                document.getElementById('loginError').textContent = 'Этот логин уже занят';
-                showMessage('Логин уже занят другим пользователем.', true);
+            // СНАЧАЛА проверяем, занят ли логин (любым паролем)
+            if (isLoginTaken(login)) {
+                // Если логин занят, проверяем - тем же паролем или другим
+                if (isUserExists(login, password)) {
+                    // Если пользователь уже существует с тем же паролем - форма входа
+                    showMessage('Вы уже зарегистрированы. Войдите в систему.', true);
+                    showForm('login');
+                    document.getElementById('loginInput').value = login;
+                    document.getElementById('passwordInput').value = password;
+                } else {
+                    // Если логин занят, но пароль другой
+                    document.getElementById('loginError').textContent = 'Этот логин уже занят';
+                    showMessage('Логин уже занят другим пользователем.', true);
+                }
             } else {
-                // Регистрируем нового пользователя
+                // Логин свободен - регистрируем нового пользователя
                 saveUser(login, password);
                 
                 if (saveData) {

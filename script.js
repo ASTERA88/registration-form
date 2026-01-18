@@ -84,7 +84,6 @@ function checkAutoLogin() {
             if (loginInput && rememberMeCheckbox) {
                 loginInput.value = savedLogin;
                 rememberMeCheckbox.checked = true;
-                // Автоматически показываем форму входа
                 showLoginForm();
             }
         }
@@ -177,15 +176,11 @@ window.addEventListener('load', function() {
     
     // Проверяем автоавторизацию
     if (!checkAutoLogin()) {
-        // Если не авторизованы - показываем форму регистрации
         showRegistrationForm();
     }
-    
-    console.log('Система авторизации готова к работе!');
 });
 
-// ==================== ФУНКЦИЯ ВЫХОДА (для messages.html) ====================
-// Эта функция будет доступна на странице сообщений
+// ==================== ФУНКЦИЯ ВЫХОДА ====================
 window.logoutUser = function() {
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(CURRENT_USER_KEY);

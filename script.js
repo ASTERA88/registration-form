@@ -14,10 +14,16 @@ function saveUser(login, password) {
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
 
-// Проверить, существует ли логин
-function isLoginTaken(login) {
+// Проверить, существует ли пользователь
+function userExists(login, password = null) {
     const users = getUsers();
-    return users.some(user => user.login === login);
+    if (password) {
+        // Проверка логина И пароля
+        return users.some(user => user.login === login && user.password === password);
+    } else {
+        // Проверка только логина
+        return users.some(user => user.login === login);
+    }
 }
 
 // Проверить логин на валидность
@@ -31,11 +37,6 @@ function validateLogin(login) {
     const validChars = /^[A-Za-z0-9_-]+$/;
     if (!validChars.test(login)) {
         return 'Только латинские буквы, цифры, _ и -';
-    }
-    
-    // 3. Проверка на существование
-    if (isLoginTaken(login)) {
-        return 'Этот логин уже занят';
     }
     
     return ''; // Ошибок нет
@@ -70,37 +71,33 @@ function showMessage(text, isError = false) {
 
 // Очистить ошибки
 function clearErrors() {
-    // Очищаем все красные ошибки
     document.querySelectorAll('.error').forEach(el => {
         el.textContent = '';
     });
 }
 
-// === ПЕРЕКЛЮЧЕНИЕ МЕЖДУ ФОРМАМИ ===
-
-// Кнопка "Уже есть аккаунт? Войти"
-document.getElementById('switchToLogin').addEventListener('click', function() {
-    document.getElementById('registrationForm').classList.add('hidden');
-    document.getElementById('loginForm').classList.remove('hidden');
-    clearErrors();
-    document.getElementById('message').textContent = '';
-});
-
-// Кнопка "Нет аккаунта? Зарегистрироваться"
-document.getElementById('switchToReg').addEventListener('click', function() {
-    document.getElementById('loginForm').classList.add('hidden');
+// Показать форму регистрации
+function showRegistrationForm() {
     document.getElementById('registrationForm').classList.remove('hidden');
+    document.getElementById('loginForm').classList.add('hidden');
     clearErrors();
     document.getElementById('message').textContent = '';
-});
+}
+
+// Показать форму входа
+function showLoginForm() {
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('registrationForm').classList.add('hidden');
+    clearErrors();
+    document.getElementById('message').textContent = '';
+}
 
 // === ОБРАБОТКА ФОРМЫ РЕГИСТРАЦИИ ===
 document.getElementById('registrationForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Отменяем стандартную отправку
+    event.preventDefault();
     
     clearErrors();
     
-    // Получаем значения полей
     const login = document.getElementById('login').value;
     const password = document.getElementById('password').value;
     const saveData = document.getElementById('saveData').checked;
@@ -117,28 +114,33 @@ document.getElementById('registrationForm').addEventListener('submit', function(
         document.getElementById('passwordError').textContent = passwordError;
     }
     
-    // Если ошибок нет - регистрируем
+    // Если ошибок нет
     if (!loginError && !passwordError) {
-        // Сохраняем пользователя
-        saveUser(login, password);
-        
-        // Сохраняем логин, если отмечена галочка
-        if (saveData) {
-            localStorage.setItem('last_login', login);
+        // Проверяем, существует ли уже пользователь
+        if (userExists(login, password)) {
+            // Если пользователь уже есть - показываем форму входа
+            showMessage('Пользователь уже существует. Войдите в систему.', true);
+            showLoginForm();
+            // Заполняем поля формы входа
+            document.getElementById('loginInput').value = login;
+            document.getElementById('passwordInput').value = password;
+        } else {
+            // Если пользователя нет - регистрируем
+            saveUser(login, password);
+            
+            // Сохраняем логин, если отмечена галочка
+            if (saveData) {
+                localStorage.setItem('last_login', login);
+            }
+            
+            // Показываем успех
+            showMessage(`Пользователь "${login}" успешно зарегистрирован!`);
+            
+            // Очищаем форму
+            document.getElementById('registrationForm').reset();
+            
+            // Остаемся на форме регистрации
         }
-        
-        // Показываем успех
-        showMessage(`Пользователь "${login}" успешно зарегистрирован!`);
-        
-        // Очищаем форму
-        document.getElementById('registrationForm').reset();
-        clearErrors();
-        
-        // Автоматически переключаем на форму входа
-        setTimeout(() => {
-            document.getElementById('registrationForm').classList.add('hidden');
-            document.getElementById('loginForm').classList.remove('hidden');
-        }, 1500);
     }
 });
 
@@ -151,25 +153,32 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     const login = document.getElementById('loginInput').value;
     const password = document.getElementById('passwordInput').value;
     
-    // Ищем пользователя
-    const users = getUsers();
-    const user = users.find(u => u.login === login && u.password === password);
-    
-    if (user) {
+    // Проверяем существование пользователя с такими данными
+    if (userExists(login, password)) {
         // Успешный вход
-        showMessage(`Добро пожаловать, ${login}!`);
+        showMessage(`Добро пожаловать, ${login}! Вход выполнен успешно.`);
         document.getElementById('loginForm').reset();
         
-        // Через 2 секунды показываем регистрацию
+        // Через 2 секунды возвращаем к регистрации
         setTimeout(() => {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registrationForm').classList.remove('hidden');
+            showRegistrationForm();
         }, 2000);
     } else {
         // Ошибка входа
         document.getElementById('loginError2').textContent = 'Неверный логин или пароль';
         showMessage('Ошибка входа. Проверьте данные.', true);
     }
+});
+
+// === ПЕРЕКЛЮЧЕНИЕ МЕЖДУ ФОРМАМИ (ручное) ===
+// Кнопка "Уже есть аккаунт? Войти"
+document.getElementById('switchToLogin').addEventListener('click', function() {
+    showLoginForm();
+});
+
+// Кнопка "Нет аккаунта? Зарегистрироваться"
+document.getElementById('switchToReg').addEventListener('click', function() {
+    showRegistrationForm();
 });
 
 // === ЗАГРУЗКА СОХРАНЕННОГО ЛОГИНА ===
@@ -179,6 +188,9 @@ window.addEventListener('load', function() {
         document.getElementById('login').value = savedLogin;
         document.getElementById('saveData').checked = true;
     }
+    
+    // Всегда показываем форму регистрации при загрузке
+    showRegistrationForm();
     
     console.log('Форма регистрации готова к работе!');
 });

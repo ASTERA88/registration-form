@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои сообщения</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .messages-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .user-info {
+            background-color: #e0f7e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info h2 {
+            margin: 0;
+            color: #0a2463;
+        }
+        
+        .logout-btn {
+            background-color: #ffccd6;
+            color: #0a2463;
+            border: 2px solid #ff99aa;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .logout-btn:hover {
+            background-color: #ffb6c1;
+        }
+        
+        .messages-list {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(10, 36, 99, 0.1);
+        }
+        
+        .message-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4a90e2;
+            background-color: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .message-sender {
+            font-weight: bold;
+            color: #0a2463;
+        }
+        
+        .message-time {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .message-content {
+            color: #333;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container messages-container">
+        <!-- ИСПРАВЛЕННАЯ КНОПКА ВЫХОДА -->
+        <div class="user-info">
+            <h2 id="userGreeting">Сообщения</h2>
+            <button class="logout-btn" id="logoutBtn" onclick="logoutUser()">Выйти</button>
+        </div>
+        
+        <div class="messages-list">
+            <h3 style="color: #0a2463; margin-bottom: 20px;">Ваши сообщения</h3>
+            
+            <div id="messagesContainer">
+                <div class="message-item">
+                    <div class="message-header">
+                        <span class="message-sender">Администратор</span>
+                        <span class="message-time">Сегодня, 10:30</span>
+                    </div>
+                    <div class="message-content">
+                        Добро пожаловать! Ваш вход выполнен успешно.
+                    </div>
+                </div>
+                
+                <div class="message-item">
+                    <div class="message-header">
+                        <span class="message-sender">Система</span>
+                        <span class="message-time">Вчера, 14:45</span>
+                    </div>
+                    <div class="message-content">
+                        Не забудьте сменить пароль при первом входе.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="index.html" style="color: #1e88e5; text-decoration: underline;">
+                ← Вернуться к форме входа
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // ЗАЩИТА СТРАНИЦЫ: проверяем авторизацию
+        document.addEventListener('DOMContentLoaded', function() {
+            const authToken = localStorage.getItem('authToken');
+            const currentUser = localStorage.getItem('currentUser');
+            
+            // Если пользователь не авторизован - отправляем на страницу входа
+            if (!authToken || !currentUser) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Показываем имя пользователя
+            document.getElementById('userGreeting').textContent = 
+                `Добро пожаловать, ${currentUser}!`;
+        });
+        
+        // ФУНКЦИЯ ВЫХОДА - должна быть в глобальной области видимости
+        window.logoutUser = function() {
+            // Удаляем все данные авторизации
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('rememberMe');
+            localStorage.removeItem('savedLogin');
+            
+            // Переходим на страницу входа
+            window.location.href = 'index.html';
+        };
+        
+        // Дополнительная защита
+        window.onload = function() {
+            if (!localStorage.getItem('authToken')) {
+                document.body.innerHTML = `
+                    <div class="container">
+                        <div style="text-align: center; padding: 50px; background-color: #f8d7da; 
+                             border-radius: 10px; border: 2px solid #f5c6cb; color: #721c24;">
+                            <h2>Доступ запрещен</h2>
+                            <p>Эта страница доступна только авторизованным пользователям.</p>
+                            <p>Переход на страницу входа...</p>
+                        </div>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            }
+        };
+    </script>
+</body>
+</html>

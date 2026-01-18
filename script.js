@@ -69,12 +69,6 @@ function showLoginForm() {
 
 // ==================== АВТОАВТОРИЗАЦИЯ ====================
 function checkAutoLogin() {
-    // Если пользователь уже авторизован - перенаправляем на messages.html
-    if (localStorage.getItem(AUTH_TOKEN_KEY)) {
-        window.location.href = 'messages.html';
-        return true;
-    }
-    
     // Если был выбран "Запомнить меня" - заполняем форму входа
     if (localStorage.getItem(REMEMBER_ME_KEY) === 'true') {
         const savedLogin = localStorage.getItem(SAVED_LOGIN_KEY);
@@ -84,7 +78,6 @@ function checkAutoLogin() {
             if (loginInput && rememberMeCheckbox) {
                 loginInput.value = savedLogin;
                 rememberMeCheckbox.checked = true;
-                showLoginForm();
             }
         }
     }
@@ -174,15 +167,18 @@ window.addEventListener('load', function() {
         document.getElementById('saveData').checked = true;
     }
     
-    // Проверяем автоавторизацию
-    if (!checkAutoLogin()) {
-        showRegistrationForm();
-    }
+    // Проверяем автоавторизацию (только заполняет поля)
+    checkAutoLogin();
+    
+    // ВСЕГДА показываем форму регистрации при загрузке
+    showRegistrationForm();
 });
 
 // ==================== ФУНКЦИЯ ВЫХОДА ====================
 window.logoutUser = function() {
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(CURRENT_USER_KEY);
+    localStorage.removeItem(REMEMBER_ME_KEY);
+    localStorage.removeItem(SAVED_LOGIN_KEY);
     window.location.href = 'index.html';
 };

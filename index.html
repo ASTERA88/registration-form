@@ -8,80 +8,49 @@
 </head>
 <body>
     <div class="container">
-        <!-- ФОРМА РЕГИСТРАЦИИ -->
         <form id="registrationForm" class="form">
             <h2>Регистрация</h2>
-            
-            <!-- Поле Логин -->
             <div class="form-group">
                 <label for="login">Логин:</label>
-                <input type="text" id="login" placeholder="Введите логин" required>
-                <div class="hint">Можно использовать: латинские буквы, цифры, _ , -</div>
+                <input type="text" id="login" required>
+                <div class="hint">Латинские буквы, цифры, _ , -</div>
                 <div class="error" id="loginError"></div>
             </div>
-            
-            <!-- Поле Пароль -->
             <div class="form-group">
                 <label for="password">Пароль:</label>
-                <input type="password" id="password" placeholder="Введите пароль" required>
+                <input type="password" id="password" required>
                 <div class="hint">Не менее 6 символов</div>
                 <div class="error" id="passwordError"></div>
             </div>
-            
-            <!-- Чекбокс "Сохранить данные" -->
             <div class="form-group">
                 <label class="checkbox">
                     <input type="checkbox" id="saveData">
                     <span>Сохранить данные</span>
                 </label>
             </div>
-            
-            <!-- Кнопка регистрации -->
             <button type="submit">Зарегистрироваться</button>
-            
-            <!-- Ссылка для перехода к форме входа -->
-            <div class="link" id="switchToLogin">
-                Уже есть аккаунт? Войти
-            </div>
+            <div class="link" id="switchToLogin">Уже есть аккаунт? Войти</div>
         </form>
         
-        <!-- ФОРМА ВХОДА (скрыта изначально) -->
         <form id="loginForm" class="form hidden">
             <h2>Вход</h2>
-            
-            <!-- Поле Логин -->
             <div class="form-group">
                 <label for="loginInput">Логин:</label>
-                <input type="text" id="loginInput" placeholder="Введите логин" required>
+                <input type="text" id="loginInput" required>
                 <div class="error" id="loginError2"></div>
             </div>
-            
-            <!-- Поле Пароль -->
             <div class="form-group">
                 <label for="passwordInput">Пароль:</label>
-                <input type="password" id="passwordInput" placeholder="Введите пароль" required>
+                <input type="password" id="passwordInput" required>
                 <div class="error" id="passwordError2"></div>
             </div>
-            
-            <!-- Кнопка входа -->
             <button type="submit">Войти</button>
-            
-            <!-- Ссылка для возврата к регистрации -->
-            <div class="link" id="switchToReg">
-                Нет аккаунта? Зарегистрироваться
-            </div>
+            <div class="link" id="switchToReg">Нет аккаунта? Зарегистрироваться</div>
         </form>
         
-        <!-- Блок для вывода сообщений -->
         <div id="message" class="message"></div>
-        
-        <!-- Информация о заполненных полях -->
-        <div class="hint" style="text-align: center; margin-top: 20px;">
-            Все поля обязательны для заполнения
-        </div>
     </div>
     
-    <!-- Подключение JavaScript файла -->
     <script src="script.js"></script>
 </body>
 </html>

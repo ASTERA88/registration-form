@@ -1,0 +1,211 @@
+/* ОСНОВНЫЕ СТИЛИ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif; /* Шрифт Ариал */
+    color: #0a2463; /* Темно-синий цвет текста */
+    background-color: #f0f8ff; /* Светлый фон страницы */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px; /* Фиксированная ширина формы */
+}
+
+/* ОБЩИЕ СТИЛИ ДЛЯ ФОРМ */
+.form {
+    background-color: #e0f7e9; /* Бледно-зеленый цвет формы */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(10, 36, 99, 0.15);
+    border: 2px solid #c8e6c9;
+}
+
+/* СКРЫТАЯ ФОРМА */
+.hidden {
+    display: none !important;
+}
+
+/* ЗАГОЛОВОК */
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #0a2463;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* ГРУППЫ ПОЛЕЙ */
+.form-group {
+    margin-bottom: 22px;
+}
+
+/* ПОДПИСИ К ПОЛЯМ */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #0a2463;
+}
+
+/* ПОЛЯ ВВОДА (Логин и Пароль) - БЛЕДНО-ЖЕЛТЫЕ */
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 14px;
+    background-color: #fffacd; /* Бледно-желтый цвет полей */
+    border: 2px solid #ffeb3b; /* Желтая граница */
+    border-radius: 8px;
+    font-size: 16px;
+    color: #0a2463;
+    transition: all 0.3s;
+}
+
+/* ФОКУС НА ПОЛЕ ВВОДА */
+input[type="text"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: #ff9800;
+    background-color: #fff9c4;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
+}
+
+/* ПОДСКАЗКИ ПОД ПОЛЯМИ */
+.hint {
+    font-size: 13px;
+    color: #5d7eb6;
+    margin-top: 6px;
+    font-style: italic;
+}
+
+/* СООБЩЕНИЯ ОБ ОШИБКАХ */
+.error {
+    color: #d32f2f;
+    font-size: 14px;
+    margin-top: 6px;
+    min-height: 20px;
+    font-weight: bold;
+}
+
+/* ЧЕКБОКС "Сохранить данные" */
+.checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.checkbox input {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox span {
+    color: #0a2463;
+    font-weight: normal;
+}
+
+/* КНОПКИ - БЛЕДНО-РОЗОВЫЕ */
+button {
+    width: 100%;
+    padding: 16px;
+    background-color: #ffccd6; /* Бледно-розовый цвет кнопки */
+    color: #0a2463;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 15px;
+    border: 2px solid #ff99aa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ЭФФЕКТ ПРИ НАВЕДЕНИИ */
+button:hover {
+    background-color: #ffb6c1;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 99, 132, 0.3);
+}
+
+/* ЭФФЕКТ ПРИ НАЖАТИИ */
+button:active {
+    transform: translateY(0);
+    background-color: #ff99aa;
+}
+
+/* ССЫЛКИ ДЛЯ ПЕРЕКЛЮЧЕНИЯ ФОРМ */
+.link {
+    text-align: center;
+    margin-top: 22px;
+    color: #1e88e5;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: underline;
+    transition: color 0.3s;
+}
+
+.link:hover {
+    color: #0d47a1;
+    text-decoration: none;
+}
+
+/* БЛОК ДЛЯ СООБЩЕНИЙ */
+.message {
+    margin-top: 25px;
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    border: 2px solid;
+}
+
+/* УСПЕШНОЕ СООБЩЕНИЕ */
+.success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+/* СООБЩЕНИЕ ОБ ОШИБКЕ */
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+/* АДАПТИВНОСТЬ ДЛЯ ТЕЛЕФОНОВ */
+@media (max-width: 500px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .form {
+        padding: 20px;
+    }
+    
+    h2 {
+        font-size: 24px;
+    }
+    
+    button {
+        padding: 14px;
+        font-size: 16px;
+    }
+}
